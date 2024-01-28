@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, Entry, Frame, LEFT, RIGHT,Toplevel,messagebox,Checkbutton,Radiobutton,IntVar, Spinbox, StringVar
+from tkinter import Tk, Label, Button, Entry, Frame, LEFT, RIGHT,Toplevel,messagebox,Checkbutton,Radiobutton,IntVar,RAISED, StringVar,Text,X,W
 from PIL import Image, ImageTk
 from tkinter.ttk import *
 import mysql.connector
@@ -62,7 +62,7 @@ class MainPageLogin:
         self.student_label = Label(self.student_frame, text="Student Login")
         self.student_label.pack()
 
-        # Load and resize student image using Pillow
+        # Loading and resizing student image using Pillow
         student_image_path = "student_logo.png"  
         student_image = Image.open(student_image_path)
         student_image = student_image.resize((140, 140), Image.ANTIALIAS if hasattr(Image, 'ANTIALIAS') else Image.BICUBIC)
@@ -103,7 +103,11 @@ class MainPageLogin:
         cursor.close()
 
         if result:
-            messagebox.showinfo('Login Successful', 'Admin login successful')
+            admin_username = result[0]
+            a_dash = Toplevel(self.master)
+            a_dash.geometry('450x350+400+100')
+            dasha = AdminDashboard(a_dash,admin_username)
+            
         else:
             messagebox.showerror('Login Failed', 'Invalid credentials')
 
@@ -124,9 +128,10 @@ class MainPageLogin:
         result = cursor.fetchone()
         cursor.close()
         if result:
+            student_username = result[0]
             dash = Toplevel(self.master)
             dash.geometry('450x350+400+100')
-            dashb = StudentDashboard(dash)
+            dashb = StudentDashboard(dash,student_username)
         else:
             messagebox.showerror('Login Failed', 'Invalid credentials')
 
@@ -259,13 +264,18 @@ class StudentReg:
 
         self.master.destroy()
 
-
+#student dash board page
 class StudentDashboard:
-    def __init__(self, master):
+    def __init__(self, master,student_username):
         self.master = master
         self.master.title("Student Dashboard")
         
-        # self.student_username = student_username
+        self.student_username = student_username
+
+        #welcome label
+        self.welcome_label = Label(self.master, text=f"Hi! Welcome, {self.student_username}")
+        self.welcome_label.pack(pady=10)
+
 
         # Creating buttons
         self.place_order_button = Button(self.master, text="Place Order", command=self.place_order)
@@ -277,7 +287,7 @@ class StudentDashboard:
     def place_order(self):
         pla = Toplevel(self.master)
         pla.geometry('450x350+400+100')
-        place = PlaceOrder(pla)
+        place = PlaceOrder(pla,self.student_username)
         
 
     def support(self):
@@ -285,10 +295,10 @@ class StudentDashboard:
 
 
 class PlaceOrder:
-    def __init__(self, master):
+    def __init__(self, master,username):
         self.master = master
         self.master.title("Place Order - Laundry Management System")
-        #self.username = username
+        self.student_username = username
 
         self.order_frame = Frame(master)
         self.order_frame.pack(padx=20, pady=20)
@@ -332,9 +342,14 @@ class PlaceOrder:
         self.cod_rb = Radiobutton(self.order_frame, text="COD", variable=self.payment_var, value="COD")
         self.cod_rb.grid(row=5, column=1, pady=5)
 
+        self.requirements_label = Label(self.order_frame, text="Any Other Requirements:")
+        self.requirements_label.grid(row=6, column=0, pady=5)
+
+        self.requirements_text = Text(self.order_frame, height=4, width=30)
+        self.requirements_text.grid(row=6, column=1, pady=5)
         # Place Order Button
         self.place_order_button = Button(self.order_frame, text="Place Order", command=self.place_order)
-        self.place_order_button.grid(row=6, column=1, columnspan=2, pady=10)
+        self.place_order_button.grid(row=7, column=1, columnspan=2, pady=10)
 
     def place_order(self):
         # Get values from widgets and process the order
@@ -346,8 +361,79 @@ class PlaceOrder:
             services_required.append("Wash and Fold")
         if self.iron_required_var.get():
             services_required.append("Iron Required")
-        preffered_time = self.time_entry.get()
+        preferred_time = self.time_entry.get()
         mode_of_payment = self.payment_var.get()
+        other_requirements = self.requirements_text.get("1.0", "end-1c")  # Get text from Text widget
+        query = '''
+            INSERT INTO stu_requests (student_username, num_of_clothes, services_required, preferred_time, mode_of_payment, other_requirements)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        '''
+        cursor.execute(query, (self.student_username, num_of_clothes, ', '.join(services_required), preferred_time, mode_of_payment, other_requirements))
+        conn.commit()
+
+        messagebox.showinfo('Order Placed', 'Your order has been placed successfully.')
+        self.master.destroy()
+class AdminDashboard:
+    def __init__(self, master,admin_username):
+        self.master = master
+        self.master.title("Student Dashboard")
+        
+        self.admin_username = admin_username
+
+        #welcome label
+        self.welcome_label = Label(self.master, text=f"Hi! Welcome, {self.admin_username}")
+        self.welcome_label.pack(pady=10)
+        self.display_requests()
+    def display_requests(self):
+        # Fetch student requests from the stu_requests table
+            query = "SELECT * FROM stu_requests"
+            cursor.execute(query)
+            requests = cursor.fetchall()
+
+            # Display each request in a box with a "Completed" button
+            for request in requests:
+                request_frame = Frame(self.master, padding=(10, 10), relief=RAISED, borderwidth=2)
+
+                request_frame.pack(pady=10, fill=X)
+
+                student_label = Label(request_frame, text=f"Student: {request[1]}")
+                student_label.pack(anchor=W)
+
+                num_clothes_label = Label(request_frame, text=f"Number of Clothes: {request[2]}")
+                num_clothes_label.pack(anchor=W)
+
+                services_label = Label(request_frame, text=f"Services Required: {request[3]}")
+                services_label.pack(anchor=W)
+
+                time_label = Label(request_frame, text=f"Preferred Time: {request[4]}")
+                time_label.pack(anchor=W)
+
+                payment_label = Label(request_frame, text=f"Mode of Payment: {request[5]}")
+                payment_label.pack(anchor=W)
+
+                requirements_label = Label(request_frame, text=f"Other Requirements: {request[6]}")
+                requirements_label.pack(anchor=W)
+
+                # Completed button
+                completed_button = Button(request_frame, text="Completed", command=lambda r=request[0]: self.mark_as_completed(r))
+                completed_button.pack(anchor=W)
+
+    def mark_as_completed(self, request_id):
+            # Update the stu_requests table to mark the request as completed
+            query = "UPDATE stu_requests SET status='Completed' WHERE request_id=%s"
+            cursor.execute(query, (request_id,))
+            conn.commit()
+
+            messagebox.showinfo('Request Completed', 'The request has been marked as completed.')
+            # Refresh the display after marking as completed
+            self.refresh_display()
+
+    def refresh_display(self):
+        # Destroy all existing frames and redisplay the requests
+        for widget in self.master.winfo_children():
+            widget.destroy()
+        self.display_requests()
+
 
 
 #usage
