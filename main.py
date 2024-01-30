@@ -291,7 +291,29 @@ class StudentDashboard:
         
 
     def support(self):
-        pass
+        query = "SELECT username, mobilenumber, hostel FROM admin_reg"
+        cursor.execute(query)
+        admins = cursor.fetchall()
+
+        support_window = Toplevel(self.master)
+        support_window.geometry('450x350+400+100')
+        support_window.title("Admin Contact Details")
+
+
+        # Display admin contact details
+        for admin in admins:
+            if admin[0]:
+                admin_frame = Frame(support_window, padding=(10, 10), relief=RAISED, borderwidth=2)
+                admin_frame.pack(pady=10, fill=X)
+
+                admin_name_label = Label(admin_frame, text=f"Admin Name: {admin[0]}")
+                admin_name_label.pack(anchor=W)
+
+                admin_mobile_label = Label(admin_frame, text=f"Mobile Number: {admin[1]}")
+                admin_mobile_label.pack(anchor=W)
+
+                admin_hostel_label = Label(admin_frame, text=f"Hostel: {admin[2]}")
+                admin_hostel_label.pack(anchor=W)
 
 
 class PlaceOrder:
@@ -390,7 +412,7 @@ class AdminDashboard:
             cursor.execute(query)
             requests = cursor.fetchall()
 
-            # Display each request in a box with a "Completed" button
+            # Displaying all request each in a box with a Completed button for admin to visit
             for request in requests:
                 request_frame = Frame(self.master, padding=(10, 10), relief=RAISED, borderwidth=2)
 
