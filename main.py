@@ -437,24 +437,17 @@ class AdminDashboard:
                 requirements_label.pack(anchor=W)
 
                 # Completed button
-                completed_button = Button(request_frame, text="Completed", command=lambda r=request[0]: self.mark_as_completed(r))
+                completed_button = Button(request_frame, text="Completed", command=lambda req_id=request[0], frame=request_frame: self.mark_as_completed(req_id, frame))
                 completed_button.pack(anchor=W)
 
-    def mark_as_completed(self, request_id):
-            # Update the stu_requests table to mark the request as completed
-            query = "UPDATE stu_requests SET status='Completed' WHERE request_id=%s"
-            cursor.execute(query, (request_id,))
-            conn.commit()
+    def mark_as_completed(self, request_id,request_frame):
+        # Remove the request from the database based on the request_id
+        query = "DELETE FROM stu_requests WHERE request_id = %s"
+        cursor.execute(query, (request_id,))
+        conn.commit()
 
-            messagebox.showinfo('Request Completed', 'The request has been marked as completed.')
-            # Refresh the display after marking as completed
-            self.refresh_display()
-
-    def refresh_display(self):
-        # Destroy all existing frames and redisplay the requests
-        for widget in self.master.winfo_children():
-            widget.destroy()
-        self.display_requests()
+        # Destroy the request frame from the dashboard
+        request_frame.destroy()
 
 
 
