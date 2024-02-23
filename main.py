@@ -26,8 +26,8 @@ class MainPageLogin:
         self.admin_label = Label(self.admin_frame, text="Admin Login")
         self.admin_label.pack()
 
-        # Load and resize admin image using Pillow
-        admin_image_path = "admin_logo.jpg"  # Replace with the actual path
+
+        admin_image_path = "admin_logo.jpg"  
         admin_image = Image.open(admin_image_path)
         admin_image = admin_image.resize((140, 140), Image.ANTIALIAS if hasattr(Image, 'ANTIALIAS') else Image.BICUBIC)
         admin_image = ImageTk.PhotoImage(admin_image)
@@ -272,16 +272,18 @@ class StudentDashboard:
         
         self.student_username = student_username
 
-        #welcome label
+     
         self.welcome_label = Label(self.master, text=f"Hi! Welcome, {self.student_username}")
         self.welcome_label.pack(pady=10)
 
 
-        # Creating buttons
         self.place_order_button = Button(self.master, text="Place Order", command=self.place_order)
         self.place_order_button.pack(pady=10)
 
         self.support_button = Button(self.master, text="Support", command=self.support)
+        self.support_button.pack(pady=10)
+
+        self.support_button = Button(self.master, text="Instructions", command=self.instructions)
         self.support_button.pack(pady=10)
 
     def place_order(self):
@@ -314,7 +316,21 @@ class StudentDashboard:
 
                 admin_hostel_label = Label(admin_frame, text=f"Hostel: {admin[2]}")
                 admin_hostel_label.pack(anchor=W)
+    def instructions(self):
+        instructions_text = """
+        Instructions:
+        1. Operating Hours: Monday to Saturday, 9:00 AM to 7:00 PM.
+        2. Closed on Sundays and Public Holidays.
+        3. For any queries or support, contact the admin using the 'Support' button.
+        """
 
+        instructions_window = Toplevel(self.master)
+        instructions_window.geometry('450x350+400+100')
+        instructions_window.title("Instructions")
+
+        instructions_label = Label(instructions_window, text=instructions_text, justify="left")
+        instructions_label.pack(pady=10)
+        
 
 class PlaceOrder:
     def __init__(self, master,username):
