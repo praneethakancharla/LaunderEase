@@ -1,0 +1,35 @@
+create database lms;
+
+use lms;
+
+CREATE TABLE student_reg (
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    mobilenumber VARCHAR(15) NOT NULL,
+    hostel VARCHAR(255) NOT NULL,
+    roomnumber VARCHAR(10) NOT NULL
+);
+select * from student_reg;
+
+
+CREATE TABLE IF NOT EXISTS stu_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_username VARCHAR(255) NOT NULL,
+    num_of_clothes INT NOT NULL,
+    services_required TEXT,
+    preferred_time VARCHAR(255),
+    mode_of_payment VARCHAR(50),
+    other_requirements TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+select * from stu_requests;
+
+
+CREATE TABLE admin_reg (
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    mobilenumber VARCHAR(15) NOT NULL,
+    hostel VARCHAR(255) NOT NULL
+);
