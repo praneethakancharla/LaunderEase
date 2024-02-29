@@ -39,7 +39,7 @@ The project aims to create a user-friendly system for students to place laundry 
 
 ## Installation
 
-1. Clone the repository
-2. Run the sql queries provided in sql_queries.txt for creating necessary tables.
-3. Installing dependencies in terminal after opening the folder: <br> pip install pillow <br> pip install mysql-connector-python.
-4. Run the application by typing "python main.py" command
+- Clone the repository
+- Run the sql queries provided in sql_queries.txt for creating necessary tables.
+- Installing dependencies in terminal after opening the folder: <br> pip install pillow <br> pip install mysql-connector-python.
+- Run the application by typing "python main.py" command
