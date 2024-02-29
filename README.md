@@ -1,4 +1,4 @@
-# Laundry Management System (LMS)
+# LaunderEase - Laundry Management System 
 
 Laundry Management System (LMS) is a Python-based application. It helps manage laundry services for students living in hostels.
 
