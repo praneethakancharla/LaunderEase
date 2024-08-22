@@ -28,7 +28,7 @@ The project aims to create a user-friendly system for students to place laundry 
 - **Tkinter:** Python's standard GUI (Graphical User Interface) library used for building the application's interface.
 - **MySQL:** Relational database management system used for storing application data.
 - **Pillow:** Python Imaging Library used for image processing and displaying images in the application.
-- **GitLab:** Version control platform used for collaboration and project management.
+- **GitHub:** Version control platform used for collaboration and project management.
 
 ## File Structure
 - **Main Script (main.py):** The main Python script for running the application.
